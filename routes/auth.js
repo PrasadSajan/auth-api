@@ -297,20 +297,27 @@ router.post('/test-email', async (req, res) => {
     });
   }
 });
+console.log("Auth routes loaded!");
 // Google OAuth Login
-router.get('/google', passport.authenticate('google', {
-  scope: ['profile', 'email']
+router.get('/google', 
+  passport.authenticate('google', { scope: ['profile', 'email']
 }));
 
 // Google OAuth Callback
-router.get('/google/callback', passport.authenticate('google', {
-  failureRedirect: '/login.html?error=auth_failed',
-  successRedirect: '/profile.html',
-  session: true
-}));
+//router.get('/google/callback', 
+  //passport.authenticate('google', { failureRedirect: '/login.html?error=auth_failed',
+  //successRedirect: '/profile.html',
+  //session: true
+//}));
+router.get("/google/callback",
+  passport.authenticate("google", { failureRedirect: "/" }),
+  (req, res) => {
+    res.send("Google login successful");
+  });
 
 // Logout route
-router.get('/logout', (req, res) => {
+router.get('/logout', 
+  (req, res) => {
   req.logout((err) => {
     if (err) {
       return res.status(500).json({ status: 'error', message: 'Logout failed' });

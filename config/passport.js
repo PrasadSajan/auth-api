@@ -23,35 +23,36 @@ passport.deserializeUser(async (id, done) => {
 passport.use(new GoogleStrategy({
   clientID: process.env.GOOGLE_CLIENT_ID,
   clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-  callbackURL: process.env.GOOGLE_CALLBACK_URL
+  callbackURL: process.env.GOOGLE_CALLBACK
 }, async (accessToken, refreshToken, profile, done) => {
   try {
-    // Check if user already exists
-    let user = await User.findByEmail(profile.emails[0].value);
-    
-    if (user) {
-      // User exists, update Google ID if not set
-      if (!user.google_id) {
-        await pool.query(
-          'UPDATE users SET google_id = $1, updated_at = NOW() WHERE id = $2',
-          [profile.id, user.id]
-        );
-      }
-      return done(null, user);
+    const email = profile.emails[0].value;
+    const name = profile.displayName;
+    const picture = profile.photos[0].value;
+
+    // Save or find user in PostgreSQL
+    const result = await pool.query(
+      "SELECT * FROM users WHERE email = $1",
+      [email]
+    );
+
+    let user;
+    if (result.rows.length === 0) {
+      const insert = await pool.query(
+        "INSERT INTO users (username, email, password) VALUES ($1, $2, $3) RETURNING *",
+        [name, email,'GOOGLE_OAUTH']
+      );
+      user = insert.rows[0];
+    } else {
+      user = result.rows[0];
     }
-    
-    // Create new user
-    const newUser = await User.create({
-      username: profile.displayName.replace(/\s+/g, '').toLowerCase(),
-      email: profile.emails[0].value,
-      password: null, // No password for OAuth users
-      google_id: profile.id
-    });
-    
-    done(null, newUser);
-  } catch (error) {
-    done(error, null);
+
+    return done(null, user);
+  } catch (err) {
+    return done(err, null);
   }
+
+  console.log("Google callback URL being used:", process.env.GOOGLE_CALLBACK);
 }));
 
 module.exports = passport;
