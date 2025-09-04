@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AuthFlow - Secure Authentication System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: white;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* Navigation */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+        }
+        
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 30px;
+        }
+        
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            transition: opacity 0.3s;
+        }
+        
+        .nav-links a:hover {
+            opacity: 0.8;
+        }
+        
+        .auth-buttons {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            border: 2px solid white;
+        }
+        
+        .btn-outline {
+            background: transparent;
+            color: white;
+        }
+        
+        .btn-primary {
+            background: white;
+            color: #667eea;
+            border: 2px solid white;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        /* Hero Section */
+        .hero {
+            text-align: center;
+            padding: 100px 0;
+        }
+        
+        .hero h1 {
+            font-size: 48px;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .hero p {
+            font-size: 20px;
+            margin-bottom: 40px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            opacity: 0.9;
+        }
+        
+        .hero-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-bottom: 60px;
+        }
+        
+        /* Features Section */
+        .features {
+            padding: 80px 0;
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            margin: 40px 0;
+        }
+        
+        .features h2 {
+            text-align: center;
+            margin-bottom: 50px;
+            font-size: 36px;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+        
+        .feature-card {
+            background: rgba(255,255,255,0.1);
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        
+        .feature-card h3 {
+            margin: 20px 0;
+            font-size: 24px;
+        }
+        
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 40px 0;
+            margin-top: 80px;
+            border-top: 1px solid rgba(255,255,255,0.2);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Navigation -->
+        <nav>
+            <div class="logo">AuthFlow</div>
+            <div class="nav-links">
+                <a href="#features">Features</a>
+                <a href="#about">About</a>
+                <a href="#contact">Contact</a>
+            </div>
+            <div class="auth-buttons">
+                <a href="login.html" class="btn btn-outline">Login</a>
+                <a href="signup.html" class="btn btn-primary">Sign Up</a>
+            </div>
+        </nav>
+
+        <!-- Hero Section -->
+        <section class="hero">
+            <h1>Secure Authentication Made Simple</h1>
+            <p>Powerful user authentication system with modern security features, built with Node.js and PostgreSQL.</p>
+            <div class="hero-buttons">
+                <a href="login.html" class="btn btn-primary">Get Started</a>
+                <a href="#features" class="btn btn-outline">Learn More</a>
+            </div>
+        </section>
+
+        <!-- Features Section -->
+        <section id="features" class="features">
+            <h2>Why Choose AuthFlow?</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <h3>🔐 Secure</h3>
+                    <p>JWT authentication with password hashing and secure tokens</p>
+                </div>
+                <div class="feature-card">
+                    <h3>⚡ Fast</h3>
+                    <p>Lightning-fast authentication built with Node.js and Express</p>
+                </div>
+                <div class="feature-card">
+                    <h3>📧 Reliable</h3>
+                    <p>Email verification and password reset functionality</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🎨 Beautiful</h3>
+                    <p>Modern, responsive design that works on all devices</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🛡️ Protected</h3>
+                    <p>Admin dashboard with user management capabilities</p>
+                </div>
+                <div class="feature-card">
+                    <h3>📊 Scalable</h3>
+                    <p>PostgreSQL database ready for production workloads</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer>
+            <p>&copy; 2024 AuthFlow. Built with ❤️ using Node.js, Express, and PostgreSQL.</p>
+        </footer>
+    </div>
+
+    <script>
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
