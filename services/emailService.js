@@ -75,7 +75,7 @@ const sendWelcomeEmail = async (email, username) => {
 // Password reset email
 const sendPasswordResetEmail = async (email, resetToken) => {
   try {
-    const resetUrl = `http://localhost:5001/reset-password.html?token=${resetToken}`;
+    const resetUrl = `http://localhost:8000/login.html?reset=true&token=${resetToken}`;
     
     const mailOptions = {
       from: `"Auth API Team" <${process.env.EMAIL_USER}>`,
