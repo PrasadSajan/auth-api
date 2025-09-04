@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auth API Frontend</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 400px;
+            overflow: hidden;
+        }
+        
+        .tabs {
+            display: flex;
+            background: #f8f9fa;
+        }
+        
+        .tab {
+            flex: 1;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+        
+        .tab.active {
+            border-bottom: 2px solid #667eea;
+            color: #667eea;
+            font-weight: bold;
+        }
+        
+        .form-container {
+            padding: 30px;
+        }
+        
+        .form {
+            display: none;
+        }
+        
+        .form.active {
+            display: block;
+        }
+        
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        
+        .input-group {
+            margin-bottom: 20px;
+        }
+        
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+        
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        button {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+        }
+        
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 14px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        .success {
+            color: #28a745;
+        }
+        
+        .error {
+            color: #dc3545;
+        }
+        
+        .user-info {
+            background: #e8f5e8;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+        
+        .admin-panel {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: white;
+            z-index: 1000;
+            overflow-y: auto;
+            padding: 20px;
+        }
+        
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .close-admin {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="tabs">
+            <div class="tab active" onclick="showTab('signup')">Sign Up</div>
+            <div class="tab" onclick="showTab('login')">Login</div>
+            <div class="tab" onclick="showTab('forgot-password')">Reset</div>
+            <div class="tab" onclick="showTab('profile')">Profile</div>
+            <div class="tab" onclick="showAdminPanel()">Admin</div>
+        </div>
+        
+        <div class="form-container">
+            <!-- Sign Up Form -->
+            <div class="form active" id="signup-form">
+                <h2>Create Account</h2>
+                <div class="input-group">
+                    <input type="text" id="signup-username" placeholder="Username" required>
+                </div>
+                <div class="input-group">
+                    <input type="email" id="signup-email" placeholder="Email" required>
+                </div>
+                <div class="input-group">
+                    <input type="password" id="signup-password" placeholder="Password" required>
+                </div>
+                <button onclick="signup()">Sign Up</button>
+                <div class="result" id="signup-result"></div>
+            </div>
+            
+            <!-- Login Form -->
+            <div class="form" id="login-form">
+                <h2>Login</h2>
+                <div class="input-group">
+                    <input type="email" id="login-email" placeholder="Email" required>
+                </div>
+                <div class="input-group">
+                    <input type="password" id="login-password" placeholder="Password" required>
+                </div>
+                <button onclick="login()">Login</button>
+                <div class="result" id="login-result"></div>
+            </div>
+
+            <!-- Forgot Password Form -->
+            <div class="form" id="forgot-password-form">
+                <h2>Forgot Password</h2>
+                <div class="input-group">
+                    <input type="email" id="forgot-email" placeholder="Enter your email" required>
+                </div>
+                <button onclick="forgotPassword()">Send Reset Link</button>
+                <div class="result" id="forgot-result"></div>
+        
+                 <p style="text-align: center; margin-top: 15px;">
+                <a href="javascript:void(0)" onclick="showTab('login')">← Back to Login</a>
+                </p>
+            </div>
+    
+             <!-- Reset Password Form -->
+            <div class="form" id="reset-password-form">
+                <h2>Reset Password</h2>
+                <div class="input-group">
+                    <input type="text" id="reset-token" placeholder="Paste reset token from email" required>
+                </div>
+            <div class="input-group">
+                <input type="password" id="reset-password" placeholder="Enter new password" required>
+            </div>
+                <button onclick="resetPassword()">Reset Password</button>
+                <div class="result" id="reset-result"></div>
+        
+                <p style="text-align: center; margin-top: 15px;">
+                <a href="javascript:void(0)" onclick="showTab('login')">← Back to Login</a>
+                </p>
+            </div>
+            
+            <!-- Profile Section -->
+            <div class="form" id="profile-form">
+                <h2>Your Profile</h2>
+                <div class="user-info" id="user-info">
+                    Please login first...
+                </div>
+                <button onclick="getProfile()">Refresh Profile</button>
+                <button onclick="logout()" style="background: #dc3545; margin-top: 10px;">Logout</button>
+                <div class="result" id="profile-result"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Panel (initially hidden) -->
+    <div class="admin-panel" id="admin-panel">
+        <div class="admin-header">
+            <h2>Admin Dashboard</h2>
+            <button class="close-admin" onclick="closeAdminPanel()">Close</button>
+        </div>
+        
+        <div class="user-info" id="admin-stats">
+            Loading statistics...
+        </div>
+  
+        <h3>User Management</h3>
+        <div class="input-group">
+            <input type="text" id="search-users" placeholder="Search users..." onkeyup="searchUsers()">
+        </div>
+  
+        <div id="users-list" style="max-height: 300px; overflow-y: auto; margin: 15px 0;">
+            Loading users...
+        </div>
+  
+        <div class="result" id="admin-result"></div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:5001/api/auth';
+        let currentToken = localStorage.getItem('token');
+
+        // Tab navigation
+        function showTab(tabName) {
+            // Hide all forms
+            document.querySelectorAll('.form').forEach(form => {
+                form.classList.remove('active');
+            });
+            
+            // Update tab active states
+            document.querySelectorAll('.tab').forEach((tab, index) => {
+                tab.classList.remove('active');
+            });
+            
+            // Show selected form
+            document.getElementById(`${tabName}-form`).classList.add('active');
+            
+            // If showing profile tab and we have a token, load profile
+            if (tabName === 'profile' && currentToken) {
+                getProfile();
+            }
+
+            // Clear result messages when switching tabs
+            document.querySelectorAll('.result').forEach(result => {
+                result.innerHTML = '';
+            });
+        }
+
+        // Admin panel functions
+        function showAdminPanel() {
+            if (!currentToken) {
+                alert('Please login first to access admin panel');
+                showTab('login');
+                return;
+            }
+            
+            document.getElementById('admin-panel').style.display = 'block';
+            loadAdminStats();
+            loadUsers();
+        }
+        
+        function closeAdminPanel() {
+            document.getElementById('admin-panel').style.display = 'none';
+        }
+        
+        // Auth functions
+        async function signup() {
+            const resultDiv = document.getElementById('signup-result');
+            resultDiv.innerHTML = 'Creating account...';
+            
+            try {
+                const response = await fetch(`${API_BASE}/signup`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        username: document.getElementById('signup-username').value,
+                        email: document.getElementById('signup-email').value,
+                        password: document.getElementById('signup-password').value
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    resultDiv.innerHTML = `<span class="success">✅ Success! Token: ${data.token}</span>`;
+                    // Auto-switch to login tab
+                    setTimeout(() => showTab('login'), 2000);
+                } else {
+                    resultDiv.innerHTML = `<span class="error">❌ Error: ${data.message}</span>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<span class="error">❌ Network error: ${error.message}</span>`;
+            }
+        }
+        
+        async function login() {
+            const resultDiv = document.getElementById('login-result');
+            resultDiv.innerHTML = 'Logging in...';
+            
+            try {
+                const response = await fetch(`${API_BASE}/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        email: document.getElementById('login-email').value,
+                        password: document.getElementById('login-password').value
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    currentToken = data.token;
+                    localStorage.setItem('token', currentToken);
+                    resultDiv.innerHTML = `<span class="success">✅ Login successful! Welcome ${data.data.user.username}</span>`;
+                    // Auto-switch to profile tab
+                    setTimeout(() => showTab('profile'), 2000);
+                } else {
+                    resultDiv.innerHTML = `<span class="error">❌ Error: ${data.message}</span>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<span class="error">❌ Network error: ${error.message}</span>`;
+            }
+        }
+        
+        async function forgotPassword() {
+            const email = document.getElementById('forgot-email').value;
+            const resultDiv = document.getElementById('forgot-result');
+  
+            try {
+                const response = await fetch(`${API_BASE}/forgot-password`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email })
+                });
+    
+                const data = await response.json();
+                resultDiv.innerHTML = `<span class="success">✅ ${data.message}</span>`;
+            } catch (error) {
+                resultDiv.innerHTML = `<span class="error">❌ Error: ${error.message}</span>`;
+            }         
+        }
+
+        async function resetPassword() {
+            const token = document.getElementById('reset-token').value;
+            const newPassword = document.getElementById('reset-password').value;
+            const resultDiv = document.getElementById('reset-result');
+            
+            try {
+                const response = await fetch(`${API_BASE}/reset-password`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ token, newPassword })
+                });
+    
+                const data = await response.json();
+                 if (response.ok) {
+                    resultDiv.innerHTML = `<span class="success">✅ ${data.message}</span>`;
+                    setTimeout(() => showTab('login'), 2000);
+                } else {
+                    resultDiv.innerHTML = `<span class="error">❌ ${data.message}</span>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<span class="error">❌ Error: ${error.message}</span>`;
+            }
+        }
+        
+        async function getProfile() {
+            const resultDiv = document.getElementById('profile-result');
+            const userInfoDiv = document.getElementById('user-info');
+            
+            if (!currentToken) {
+                userInfoDiv.innerHTML = 'Please login first...';
+                resultDiv.innerHTML = '<span class="error">❌ No token found. Please login.</span>';
+                return;
+            }
+            
+            resultDiv.innerHTML = 'Loading profile...';
+            
+            try {
+                const response = await fetch(`${API_BASE}/me`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${currentToken}`
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    userInfoDiv.innerHTML = `
+                        <strong>User Profile:</strong><br>
+                        ID: ${data.data.user.id}<br>
+                        Username: ${data.data.user.username}<br>
+                        Email: ${data.data.user.email}<br>
+                        Created: ${new Date(data.data.user.created_at).toLocaleDateString()}
+                    `;
+                    resultDiv.innerHTML = '<span class="success">✅ Profile loaded successfully!</span>';
+                } else {
+                    userInfoDiv.innerHTML = 'Please login again...';
+                    resultDiv.innerHTML = `<span class="error">❌ Error: ${data.message}</span>`;
+                    localStorage.removeItem('token');
+                    currentToken = null;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<span class="error">❌ Network error: ${error.message}</span>`;
+            }
+        }
+        
+        function logout() {
+            currentToken = null;
+            localStorage.removeItem('token');
+            document.getElementById('user-info').innerHTML = 'Please login first...';
+            document.getElementById('profile-result').innerHTML = 
+                '<span class="success">✅ Logged out successfully!</span>';
+        }
+        
+        // Admin functions
+        async function loadAdminStats() {
+            if (!currentToken) return;
+  
+            try {
+                const response = await fetch(`${API_BASE}/admin/stats`, {
+                    headers: { 'Authorization': `Bearer ${currentToken}` }
+                });
+    
+                const data = await response.json();
+    
+                if (response.ok) {
+                    document.getElementById('admin-stats').innerHTML = `
+                    <strong>System Statistics:</strong><br>
+                    Total Users: ${data.data.total_users}<br>
+                    Today's Signups: ${data.data.today_users}<br>
+                    Admin Users: ${data.data.admin_users}<br>
+                    Regular Users: ${data.data.regular_users}
+                    `;
+                }
+            } catch (error) {
+                console.error('Error loading stats:', error);
+            }
+        }
+
+        async function loadUsers() {
+            if (!currentToken) return;
+  
+            try {
+                const response = await fetch(`${API_BASE}/admin/users`, {
+                    headers: { 'Authorization': `Bearer ${currentToken}` }
+                });
+    
+                const data = await response.json();
+    
+                if (response.ok) {
+                    let usersHtml = '';
+                    data.data.users.forEach(user => {
+                        usersHtml += `
+                        <div style="border: 1px solid #ddd; padding: 10px; margin: 5px 0; border-radius: 5px;">
+                            <strong>${user.username}</strong> (${user.email})<br>
+                            Role: 
+                                <select id="role-${user.id}" onchange="updateRole(${user.id})">
+                                <option value="user" ${user.role === 'user' ? 'selected' : ''}>User</option>
+                                <option value="moderator" ${user.role === 'moderator' ? 'selected' : ''}>Moderator</option>
+                                <option value="admin" ${user.role === 'admin' ? 'selected' : ''}>Admin</option>
+                                </select>
+                                <button onclick="deleteUser(${user.id})" style="background: #dc3545; margin-left: 10px;">Delete</button>
+                        </div>
+                        `;
+                    });
+                    document.getElementById('users-list').innerHTML = usersHtml;
+                }
+            } catch (error) {
+                console.error('Error loading users:', error);
+            }
+        }
+
+        function searchUsers() {
+            // Simple client-side search implementation
+            const searchTerm = document.getElementById('search-users').value.toLowerCase();
+            const userElements = document.getElementById('users-list').children;
+            
+            for (let i = 0; i < userElements.length; i++) {
+                const userText = userElements[i].textContent.toLowerCase();
+                if (userText.includes(searchTerm)) {
+                    userElements[i].style.display = 'block';
+                } else {
+                    userElements[i].style.display = 'none';
+                }
+            }
+        }
+
+        async function updateRole(userId) {
+            const newRole = document.getElementById(`role-${userId}`).value;
+            
+            try {
+                const response = await fetch(`${API_BASE}/admin/users/${userId}/role`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Authorization': `Bearer ${currentToken}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ role: newRole })
+                });
+                
+                const data = await response.json();
+                document.getElementById('admin-result').innerHTML = 
+                    response.ok ? `<span class="success">✅ ${data.message}</span>` : 
+                                `<span class="error">❌ ${data.message}</span>`;
+            } catch (error) {
+                document.getElementById('admin-result').innerHTML = 
+                    `<span class="error">❌ Error updating role</span>`;
+            }
+        }
+        
+        async function deleteUser(userId) {
+            if (!confirm('Are you sure you want to delete this user?')) return;
+            
+            try {
+                const response = await fetch(`${API_BASE}/admin/users/${userId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${currentToken}`
+                    }
+                });
+                
+                const data = await response.json();
+                document.getElementById('admin-result').innerHTML = 
+                    response.ok ? `<span class="success">✅ ${data.message}</span>` : 
+                                `<span class="error">❌ ${data.message}</span>`;
+                
+                // Reload users list
+                loadUsers();
+            } catch (error) {
+                document.getElementById('admin-result').innerHTML = 
+                    `<span class="error">❌ Error deleting user</span>`;
+            }
+        }
+        
+        // Check if we have a token on page load
+        if (currentToken) {
+            showTab('profile');
+        }
+    </script>
+</body>
+</html>
