@@ -2,6 +2,28 @@
 
 A complete authentication system built with Node.js, Express, PostgreSQL, and JWT.
 
+## 🖥️ Frontend Features
+
+- **Modern Responsive Design** - Works on desktop and mobile
+- **User Authentication** - Clean signup/login forms
+- **Password Reset Flow** - Complete with email integration
+- **Admin Dashboard** - User management interface
+- **JWT Token Management** - Secure authentication handling
+
+## 🚀 Running the Frontend
+
+### Using Live Server (Recommended):
+1. Install Live Server extension in VS Code
+2. Right-click `frontend/index.html`
+3. Select "Open with Live Server"
+4. Frontend runs on `http://127.0.0.1:5500`
+
+### Using http-server:
+```bash
+npm install -g http-server
+http-server frontend -p 8000
+# Frontend runs on http://localhost:8000
+
 ## 🚀 Features
 
 - **User Registration** with email verification
