@@ -281,6 +281,29 @@
         <div class="result" id="admin-result"></div>
     </div>
 
+    <!-- Google Login Button -->
+<div style="text-align: center; margin: 20px 0;">
+  <div style="margin: 10px 0; color: #666;">Or continue with</div>
+  <a href="/api/auth/google" style="
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: white;
+    color: #757575;
+    padding: 12px 24px;
+    border-radius: 4px;
+    text-decoration: none;
+    border: 1px solid #ddd;
+    font-weight: 500;
+    transition: all 0.3s;
+  ">
+    <img src="https://developers.google.com/identity/images/g-logo.png" 
+         alt="Google" 
+         style="width: 20px; height: 20px; margin-right: 10px;">
+    Continue with Google
+  </a>
+</div>
+
     <script>
         const API_BASE = 'http://localhost:5001/api/auth';
         let currentToken = localStorage.getItem('token');

@@ -7,6 +7,8 @@ const { protect } = require('../middleware/auth');
 const crypto = require('crypto');
 const { sendPasswordResetEmail } = require('../services/emailService');
 const pool = require('../config/db');
+const passport = require('../config/passport');
+
 
 // SIGNUP
 router.post('/signup', async (req, res) => {
@@ -295,4 +297,41 @@ router.post('/test-email', async (req, res) => {
     });
   }
 });
+// Google OAuth Login
+router.get('/google', passport.authenticate('google', {
+  scope: ['profile', 'email']
+}));
+
+// Google OAuth Callback
+router.get('/google/callback', passport.authenticate('google', {
+  failureRedirect: '/login.html?error=auth_failed',
+  successRedirect: '/profile.html',
+  session: true
+}));
+
+// Logout route
+router.get('/logout', (req, res) => {
+  req.logout((err) => {
+    if (err) {
+      return res.status(500).json({ status: 'error', message: 'Logout failed' });
+    }
+    res.redirect('/landing.html');
+  });
+});
+
+// Get current user (for frontend)
+router.get('/current-user', (req, res) => {
+  if (req.user) {
+    res.json({
+      status: 'success',
+      data: { user: req.user }
+    });
+  } else {
+    res.status(401).json({
+      status: 'error',
+      message: 'Not authenticated'
+    });
+  }
+});
+
 module.exports = router;
