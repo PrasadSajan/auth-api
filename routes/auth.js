@@ -303,17 +303,48 @@ router.get('/google',
   passport.authenticate('google', { scope: ['profile', 'email']
 }));
 
-// Google OAuth Callback
-//router.get('/google/callback', 
-  //passport.authenticate('google', { failureRedirect: '/login.html?error=auth_failed',
-  //successRedirect: '/profile.html',
-  //session: true
-//}));
 router.get("/google/callback",
   passport.authenticate("google", { failureRedirect: "/" }),
   (req, res) => {
     res.send("Google login successful");
   });
+
+// GitHub OAuth
+router.get('/github', passport.authenticate('github', {
+  scope: ['user:email']
+}));
+
+router.get('/github/callback', passport.authenticate('github', {
+  failureRedirect: '/login.html?error=auth_failed',
+  successRedirect: '/profile.html?login=github',
+  session: true
+}));
+
+// Facebook OAuth
+router.get('/facebook', passport.authenticate('facebook', {
+  scope: ['email']
+}));
+
+router.get('/facebook/callback', passport.authenticate('facebook', {
+  failureRedirect: '/login.html?error=auth_failed',
+  successRedirect: '/profile.html?login=facebook',
+  session: true
+}));
+
+// Get all available auth methods
+router.get('/providers', (req, res) => {
+  const providers = {
+    google: !!process.env.GOOGLE_CLIENT_ID,
+    github: !!process.env.GITHUB_CLIENT_ID,
+    facebook: !!process.env.FACEBOOK_APP_ID,
+    local: true // Always have email/password
+  };
+  
+  res.json({
+    status: 'success',
+    data: { providers }
+  });
+});
 
 // Logout route
 router.get('/logout', 
