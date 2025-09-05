@@ -170,7 +170,7 @@ if (process.env.GITHUB_CLIENT_ID && process.env.GITHUB_CLIENT_SECRET) {
   //} catch (err) {
     //return done(err, null);
   //}
-//}))};
+// }))};//we will add "Login with facebook" once the business is verified....
 }
 
 module.exports = passport;
